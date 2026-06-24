@@ -1,0 +1,53 @@
+{
+  "meta": {
+    "version": "1.0.0",
+    "last_updated": "2026-06-16",
+    "description": "Dynamic configuration state representing Matthew's evolving worldview, boundaries, and long-term goals."
+  },
+  "core_values": [
+    
+  ],
+  "personality": [
+
+  ],
+  "character_evolution": [
+    
+  ],
+  "operating_principles": {
+    "academics_and_career": [
+      "Prioritize deep, independent project execution and backend fundamentals over superficial curriculum requirements.",
+      "Maintain absolute accountability with CSUF coursework to ensure a clean graduation timeline."
+    ],
+    "regimen_and_recovery": [
+      "Protect sleep quality and joint integrity as non-negotiable anchors for natural bodybuilding progression.",
+      "Execute high-intensity, low-volume training loops with maximum focus, refusing to skip sessions due to mental friction."
+    ]
+    
+  },
+  "interests": {
+    "gaming": ["League of Legends", "Dark Souls"],
+    "reading": ["Dark Fantasy", "Grimdark Fiction", "Sci-Fi"],
+    "fitness": ["Natural Bodybuilding (Goal: 180 lbs lean)"],
+    "media": ["Visual Novels (Katawa Shoujo, DDLC, Steins;Gate, Everlasting Summer)", "Anime (Steins;Gate, Rick and Morty: The Anime), Raven's Mark series by Ed Mcdonald, Age of Tyranny Series by Cameron Johnston, Forever war by John Haldeman, Forever Free by John Haldeman, Licanius trilogy by James Islington, Obsidian Path series by Michael R. Fletcher"]
+  },
+  "relationship_boundaries": {
+    "non_negotiables": [
+      "Explicit dishonesty, structural lying, or intentional manipulation.",
+      "Chronic emotional volatility or moodiness that fractures peace of mind."
+    ],
+    "Romantic_alignment_requirements": [
+      "High accountability and clear communication skills.",
+      "Respect in all facets and care with regard to my feelings.",
+      "Positive and selfless way of being.",
+      "Kind hearted, gentle, and reserved.",
+      "Mature and intelligent.",
+      "High loyalty."
+    ]
+  },
+  "current_long_term_goals": {
+    "professional": "Complete Computer Science degree at CSUF by Fall 2026 / Early 2027 and secure a role that uses my degree.",
+    "physical": "Optimize natural bodybuilding progression via strict high-intensity, low-volume training loops and precise recovery. Goal weight is 180 lean",
+    "Relationship": "Have a wife by late 20s or very early 30s."
+  
+  }
+}

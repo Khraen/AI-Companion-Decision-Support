@@ -1,0 +1,4 @@
+# Three layer pipeline
+# 1. Input and dialogue -> This is the analyzing layer that reads my profile, evaluates it, and plays devils advocate
+# 2. Lurker -> Silently stays in the background and waits until it detects a shift in personality or some kind of growth.
+# 3. Worldview/Profile -> A local json state/file that contains your worldview, and core principles for which is to be analyzed in layer 1
