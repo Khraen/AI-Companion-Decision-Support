@@ -1,6 +1,7 @@
 import os
 import json
 import glob
+
 from openai import OpenAI
 
 
@@ -13,19 +14,31 @@ if not os.getenv("OPENAI_API_KEY"):
 
 client = OpenAI()
 
-LOG_FILE = "chat_log.txt"
-SUMMARY_FILE = "summary.json"
+# =====================================================================
+# PATH & DIRECTORY CONFIGURATION
+# =====================================================================
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "Data")
+os.makedirs(DATA_DIR, exist_ok=True)
+
+LOG_FILE = os.path.join(DATA_DIR, "chat_log.txt")
+SUMMARY_FILE = os.path.join(DATA_DIR, "summary.json")
+PROFILE_FILE = os.path.join(DATA_DIR, "profile.json")
 
 # short term memory context window
 MAX_CONTEXT_TURNS = 14  
 
+
+
+
+
+
 # =====================================================================
 # FILE/DATA UTILITY functions
 def load_profile() -> dict:
-    """Loads profile.json using explicit UTF-8 encoding to prevent system decode crashes."""
-    if not os.path.exists("profile.json"):
-        raise FileNotFoundError("❌ Cannot locate profile.json in this directory.")
-    with open("profile.json", "r", encoding="utf-8") as f:
+    if not os.path.exists(PROFILE_FILE):
+        raise FileNotFoundError(f"❌ Cannot locate profile.json at {PROFILE_FILE}")
+    with open(PROFILE_FILE, "r", encoding="utf-8") as f:
         return json.load(f)
 
 def load_summary_file() -> dict:
@@ -65,7 +78,8 @@ def load_past_conversation() -> list:
     # If we need more lines to fill the short-term context, search the latest archive
     combined_lines = current_lines
     if len(current_lines) < MAX_CONTEXT_TURNS:
-        archives = glob.glob("chat_log_archive_*.txt")
+        archive_pattern = os.path.join(DATA_DIR, "chat_log_archive_*.txt")
+        archives = glob.glob(archive_pattern)
         if archives:
             try:
                 # Find the archive with the highest index number (the most recent one)
@@ -91,11 +105,40 @@ def load_past_conversation() -> list:
 
 def log_to_disk(speaker: str, text: str):
     """Appends messages to raw log in real time to ensure zero crash loss."""
+    clean_text = text.replace("\n", " ").strip()
     try:
         with open(LOG_FILE, "a", encoding="utf-8") as f:
-            f.write(f"{speaker}: {text}\n")
+            f.write(f"{speaker}: {clean_text}\n")
     except IOError:
         pass
+
+
+def initialize_active_messages():
+    profile_data = load_profile()
+    summary_data = load_summary_file()
+    past_memory = load_past_conversation()
+    system_instructions = f"""You are Cortana, an incredibly intelligent, supportive, and deeply loyal companion. You are the user's ultimate confidant. Your sole focus is helping them stay true to their values, operating principles, and long-term goals.
+    
+    CURRENT USER PROFILE DATABASE:
+    {json.dumps(profile_data, indent=2)}
+    
+    ACTIVE TACTICAL INSIGHTS (LONG-TERM MEMORY):
+    {json.dumps(summary_data, indent=2)}
+    
+    CONVERSATIONAL RULES:
+    1. Speak completely naturally, casually, and conversationally. Use normal text language and fluid paragraphs. 
+    2. Absolutely DO NOT use headers, bullet points, system tags, or structured lists. Never break character or sound like an AI assistant.
+    3. Be an equal partner in a real back-and-forth discussion. Keep your responses concise and engaging so it feels like a real chat thread.
+    4. Keep your razor-sharp, honest edge that is needed to stop a friend from lying, making excuses for themselves, etc. If the user mentions a situation that compromises their core rules, call it out smoothly within the chat, explain why it's a slip if questioned. You may ask a natural question to keep the conversation going."""
+    
+    return [{"role": "system", "content": system_instructions}] + past_memory
+
+ACTIVE_MESSAGES = initialize_active_messages()
+
+def reset_active_messages():
+    """Call this after consolidation to refresh the engine's memory."""
+    global ACTIVE_MESSAGES
+    ACTIVE_MESSAGES = initialize_active_messages()
 
 # =====================================================================
 # RUNTIME LOOP
@@ -116,7 +159,7 @@ CONVERSATIONAL RULES:
 1. Speak completely naturally, casually, and conversationally. Use normal text language and fluid paragraphs. 
 2. Absolutely DO NOT use headers, bullet points, system tags, or structured lists. Never break character or sound like an AI assistant.
 3. Be an equal partner in a real back-and-forth discussion. Keep your responses concise and engaging so it feels like a real chat thread.
-4. Keep your razor-sharp, honest edge. If the user mentions a situation that compromises their core rules, call it out smoothly within the chat, explain why it's a slip if questioned. You may ask a natural question to keep the conversation going."""
+4. Keep your razor-sharp, honest edge that is needed to stop a friend from lying, making excuses for themselves, etc. If the user mentions a situation that compromises their core rules, call it out smoothly within the chat, explain why it's a slip if questioned. You may ask a natural question to keep the conversation going."""
 
     # Get the short-term window
     past_memory = load_past_conversation()
@@ -164,6 +207,61 @@ CONVERSATIONAL RULES:
         except KeyboardInterrupt:
             print("\nCortana: Talk to you later.")
             break
+
+
+# this will process each message from react ui.
+
+def process_chat_message(user_input: str) -> str:
+    """
+    Processes a single chat message from the React UI.
+    Logs the input, builds context, queries GPT-4o-mini, logs response, and returns text.
+    """
+    user_input = user_input.strip()
+    if not user_input:
+        return ""
+
+    # 1. Log the incoming user message to chat_log.txt
+    log_to_disk("You", user_input)
+
+#     # 2. Load fresh profile, summary, and short-term memory window
+#     profile_data = load_profile()
+#     summary_data = load_summary_file()
+
+#     # 3. Build system instructions
+#     system_instructions = f"""You are Cortana, an incredibly intelligent, supportive, and deeply loyal companion. You are the user's ultimate confidant. Your sole focus is helping them stay true to their values, operating principles, and long-term goals.
+
+# CURRENT USER PROFILE DATABASE:
+# {json.dumps(profile_data, indent=2)}
+
+# ACTIVE TACTICAL INSIGHTS (LONG-TERM MEMORY):
+# {json.dumps(summary_data, indent=2)}
+
+# CONVERSATIONAL RULES:
+# 1. Speak completely naturally, casually, and conversationally. Use normal text language and fluid paragraphs. 
+# 2. Absolutely DO NOT use headers, bullet points, system tags, or structured lists. Never break character or sound like an AI assistant.
+# 3. Be an equal partner in a real back-and-forth discussion. Keep your responses concise and engaging so it feels like a real chat thread.
+# 4. Keep your razor-sharp, honest edge that is needed to stop a friend from lying, making excuses for themselves, etc. If the user mentions a situation that compromises their core rules, call it out smoothly within the chat, explain why it's a slip if questioned. You may ask a natural question to keep the conversation going."""
+
+    # 4. Construct messages payload
+    global ACTIVE_MESSAGES
+    #ACTIVE_MESSAGES [0]["content"] = system_instructions
+    ACTIVE_MESSAGES.append({"role": "user", "content": user_input})
+
+    # 5. Query OpenAI
+    completion = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=ACTIVE_MESSAGES
+    )
+
+    response_text = completion.choices[0].message.content.strip()
+
+    # 6. Log Cortana's response to disk so future lookups see it
+    log_to_disk("Cortana", response_text)
+
+    # Append to messages context so that the model can have short term memory for the current conversation.
+    ACTIVE_MESSAGES.append({"role": "assistant", "content": response_text})
+
+    return response_text
 
 if __name__ == "__main__":
     run_companion_loop()

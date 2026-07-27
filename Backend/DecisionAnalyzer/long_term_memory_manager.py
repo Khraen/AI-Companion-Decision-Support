@@ -2,16 +2,21 @@ import os
 import json
 import glob
 from openai import OpenAI
+import datetime
 
 if not os.getenv("OPENAI_API_KEY"):
     raise ValueError("❌ Missing OPENAI_API_KEY environment variable.")
 
 client = OpenAI()
 
-LOG_FILE = "chat_log.txt"
-SUMMARY_FILE = "summary.json"
-PROFILE_FILE = "profile.json"
+# Dynamically target the DecisionAnalyzer/Data directory relative to this file
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "Data")
+os.makedirs(DATA_DIR, exist_ok=True)
 
+LOG_FILE = os.path.join(DATA_DIR, "chat_log.txt")
+SUMMARY_FILE = os.path.join(DATA_DIR, "summary.json")
+PROFILE_FILE = os.path.join(DATA_DIR, "profile.json")
 # Max size that designates a rotation
 MAX_LOG_SIZE_BYTES = 500 * 1024  # 500 KB (Roughly 7,000 to 10,000 lines of dialogue)
 
@@ -50,8 +55,8 @@ def save_summary(summary: dict):
         json.dump(summary, f, indent=2, ensure_ascii=False)
 
 def rotate_logs():
-    """Checks the size of chat_log.txt. If it exceeds the maximum size,
-    archives it to keep parsing fast.
+    """Checks the size of chat_log.txt in Data/. If it exceeds the maximum size,
+    archives it inside Data/ to keep parsing fast.
     """
     if not os.path.exists(LOG_FILE):
         return
@@ -62,20 +67,23 @@ def rotate_logs():
 
     print("📁 Main log file size threshold exceeded. Initiating rotation...")
     
-    # Find the next available archive index number 
-    existing_archives = glob.glob("chat_log_archive_*.txt")
+    # 1. Search for existing archives strictly inside DATA_DIR
+    archive_pattern = os.path.join(DATA_DIR, "chat_log_archive_*.txt")
+    existing_archives = glob.glob(archive_pattern)
     archive_index = len(existing_archives) + 1
-    archive_name = f"chat_log_archive_{archive_index}.txt"
+    
+    # 2. Build full target path inside DATA_DIR
+    archive_path = os.path.join(DATA_DIR, f"chat_log_archive_{archive_index}.txt")
     
     try:
-        # Rename the current log file to an archive one
-        os.rename(LOG_FILE, archive_name)
+        # Rename the log file inside Data/
+        os.rename(LOG_FILE, archive_path)
         
-        # Seed a brand new, empty log file for you the next active conversation
+        # Seed a brand new, empty log file
         with open(LOG_FILE, "w", encoding="utf-8") as f:
             f.write("--- New Log Segment Initialized ---\n\n")
             
-        print(f"📦 Archival successful. Records moved to: {archive_name}")
+        print(f"📦 Archival successful. Records moved to: {archive_path}")
     except OSError as e:
         print(f"❌ Log rotation failed: {e}")
 
@@ -100,7 +108,9 @@ Your task is to review the raw chronological chat logs between the user and Cort
 
 CRITICAL OBJECTIVE:
 As Cortana learns more about the user (their evolving worldview, new interests, completed goals, updated relationship standards, or changes in academic/career timelines), she must dynamically update and overwrite the profile database to keep it free from outdated informtation and 
-to keep it completely true to who the user is becoming.
+to keep it completely true to who the user is becoming. Do not update/overwrite a particular section if the user is showing signs of lying to themselves, making excuses, acting emotionally, or anything that can stop them from being true to themselves.
+Note: If no change has occurred there 
+
 
 1. PROFILE DATABASE (Core Identity, Static-leaning but evolving):
 - Update 'core_values' if they display a shift in philosophy.
@@ -113,7 +123,7 @@ to keep it completely true to who the user is becoming.
 - Update the 'character_evolution' field as the user displays breakthroughs in character development, mindset changes, or core value changes.
 
 2. Summary DATABASE (Recent milestones and short-to-mid term tracking):
-- Capture specific ongoing details (e.g., specific assignments, interview tracks, current gym splits, temporary setbacks). dynamically update and overwrite as needed to prevent outdated information.
+- Capture specific ongoing details (e.g., specific assignments, interview tracks, current gym splits, temporary setbacks). dynamically update and overwrite as needed to prevent outdated information. 
 
 EXISTING LONG-TERM SUMMARY DATABASE:
 {json.dumps(current_summary, indent=2)}
@@ -122,8 +132,16 @@ RAW CHAT LOGS TO PROCESS:
 {raw_logs}
 
 OUTPUT INSTRUCTION:
-You must return a single JSON object containing two top-level keys: "updated_profile" and "updated_summary". 
-Both must strictly match the schemas of their original databases. 
+You must return a single JSON object containing exactly three top-level keys:
+- "changes": A list of objects detailing every modification made. Each object MUST have:
+    * "field": The specific field or category changed (e.g., "core_values", "interests", "summary").
+    * "action": Either "added", "updated", or "removed".
+    * "details": A short summary of the specific piece of data changed.
+    * "reasoning": The explicit rationale or trigger from the chat logs.
+- "updated_profile": The complete profile object matching the schema.
+- "updated_summary": The complete summary object matching the schema.
+
+If no changes are detected, return an empty list [] for "changes".
 Do not alter keys, omit fields, or include Markdown code blocks/text commentary. Return ONLY the raw JSON object."""
 
     try:
@@ -143,12 +161,36 @@ Do not alter keys, omit fields, or include Markdown code blocks/text commentary.
         # extract new profile and summary from payload. Second parameter is just default value.
         updated_profile = payload.get("updated_profile", current_profile)
         updated_summary = payload.get("updated_summary", current_summary)
+        # Get changes
+        changes_list = payload.get("changes", [])
 
         save_summary(updated_summary)
         save_profile(updated_profile)
         print("Long-term memory synchronization complete.")
         print("profile.json has been dynamically updated and evolved.")
         print("summary.json has been calibrated.")
+
+
+        # --- TERMINAL LOG FORMATTER ---
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        print(f"\n\033[1;33m[{timestamp}] [MEMORY_MGR] 🔄 DUAL-LAYER SYNCHRONIZATION COMPLETE\033[0m")
+        print("=" * 80)
+        
+        if not changes_list:
+            print("\033[90m  No modifications detected during this session.\033[0m")
+        else:
+            for change in changes_list:
+                field = change.get("field", "unknown")
+                action = change.get("action", "modified")
+                details = change.get("details", "")
+                reason = change.get("reasoning", "")
+                
+                # Format: "core_values - added: React Development | reasoning: User is building a GUI"
+                print(f"🔹 \033[1m{field}\033[0m - \033[36m{action}\033[0m: {details} | \033[90mreasoning:\033[0m {reason}")
+                
+        print("-" * 80)
+        print("\033[32m✔ Databases synced and flushed to disk successfully.\033[0m")
+        print("=" * 80 + "\n")
         
         # Run log cleanup directly after a successful consolidation pass
         rotate_logs()

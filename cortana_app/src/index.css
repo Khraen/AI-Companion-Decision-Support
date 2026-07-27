@@ -1,0 +1,242 @@
+body{
+  background-color: #08080a;
+}
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden; /* This completely disables page-level scrolling */
+}
+.app-layout{
+  display: flex;
+  flex-direction: row;
+  width:100%;
+  height: 100vh
+}
+
+/* Container styling */
+.message-box-container {
+  background-color: #121316; /* Deep grey/black canvas background */
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.message-wrapper {
+  display: flex;
+  width: 100%;
+  justify-content: flex-start; /* Keeps them stacked cleanly on the left side */
+}
+
+/* Base message bubble design rules */
+.message-bubble {
+  width: 100%;
+  max-width: 650px;
+  padding: 18px 24px;
+  border-radius: 24px; /* Highly rounded corners matching your screenshot */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 400;
+  box-sizing: border-box;
+}
+
+/* --- BOT SPECIFIC BOX (Dark & Red Glow) --- */
+.message-wrapper.Cortana .message-bubble {
+  background-color: #303338; /* Dark charcoal */
+  border: 1.5px solid #a61b1b; /* Subtle red border */
+  box-shadow: 0 0 15px rgba(166, 27, 27, 0.25); /* Crimson red glow */
+  color: #d1d5db; /* Soft light grey text for readability */
+}
+
+/* --- USER SPECIFIC BOX (Light Blue/White) --- */
+.message-wrapper.User .message-bubble {
+  background-color: #dbe4ee; /* Clean light blue/white */
+  border: 1.5px solid #a5b9cc; /* Soft border overlay */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4); /* Deep drop shadow */
+  color: #0f172a; /* Dark charcoal text */
+}
+.input-container{
+  margin-top:10px;
+  margin-left:10px; margin-right:10px;
+  margin-bottom:10px;
+}
+
+
+.chat-bar{
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 26, 26, 0.6); /* Semi-transparent red border */
+  border-radius: 5px;
+  background-color: rgba(22, 22, 24, 0.85);
+  padding:5px;
+  
+  color: white;
+  width: 700px;
+  height:50px;
+  font-size:24px;
+  font-family: 'Times New Roman', Times, serif;
+  box-shadow: 0 0 15px rgba(255, 26, 26, 0.25), 
+              inset 0 0 10px rgba(255, 26, 26, 0.05);
+}
+
+.chat-bar:focus {
+  /* 1. Remove the default browser outline completely */
+  outline: none;
+
+  /* 2. Slightly brighten the border when active to show focus */
+  border-color: rgba(255, 26, 26, 0.8);
+
+  /* 3. Intensify the red glow when the user is actively typing */
+  box-shadow: 0px 0px 20px rgba(255, 26, 26, 0.45);
+  
+  /* Optional: Smoothly transition the glow when clicking in and out */
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+
+.send-button{
+  height: 50px;
+  width: 90px;
+  font-family: 'Times New Roman', Times, serif;
+  border-radius: 5px;
+  margin-left: 10px;
+  border: 1px solid rgba(255, 26, 26, 0.6); /* Semi-transparent red border */
+  box-shadow: 0 0 15px rgba(255, 26, 26, 0.25), 
+              inset 0 0 10px rgba(255, 26, 26, 0.05);
+  padding:0px;
+  font-size:24px;
+  cursor:pointer;
+  background-color: rgba(245, 245, 245, 0.677);
+}
+
+.tool-bar{
+  background-color: rgba(19, 19, 19, 0.65);
+  width:200px;
+  display: flex;
+  flex:1;
+  flex-direction: column;
+}
+.tool-bar .profile-button{
+/* Strip all default browser styling */
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+  
+  /* Center the SVG icon perfectly inside the button */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Give the button transition properties for smooth effects */
+  transition: transform 0.2s ease;
+  margin-bottom: 20px;
+}
+.tool-bar .profile-button .profile-icon{
+  color:grey;
+}
+
+
+.tool-bar .settings-button{
+  /* Strip all default browser styling */
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+  
+  /* Center the SVG icon perfectly inside the button */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Give the button transition properties for smooth effects */
+  transition: transform 0.2s ease;
+}
+.tool-bar .settings-button .settings-icon{
+color: grey;
+}
+.content-area{
+  display: flex;
+  flex-direction: column;
+  background-color: black;
+  flex:15;
+  
+}
+.content-area .image-placeholder{
+  background-color: yellow;
+}
+
+.input-area{
+  margin-top:10px;
+  margin-left:10px;
+  background-color: #23272A;
+  flex:9;
+  background-color: #23272a;
+  border-radius: 16px;       /* Gives it those smooth, rounded corners */
+  padding: 16px;             /* Pushes the inner box away from the edges */
+  padding-bottom:0px;
+  box-sizing: border-box;
+  
+  display: flex;
+  flex-direction: column;
+
+}
+
+.input-area-title{
+  color:white;
+  margin:0px;
+  margin-bottom:10px;
+  text-align: center;
+}
+.profile-view {
+  background-color: #1e1f22;
+  border-radius: 12px;       
+  width: 100%;
+  flex: 1;
+  min-height: 0;             /* Critical: allows the flex box to shrink and scroll instead of blowing out */
+  overflow-y: auto;          /* Adds a clean scrollbar vertically */
+  overflow-x: hidden;        /* Prevents horizontal overflow */
+  padding: 20px;
+  box-sizing: border-box;
+  color: #f0f0f0;            
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.profile-summary-btn-container{
+  background-color: transparent; 
+  
+  display: flex;
+  flex-direction: row;
+  margin-top: 10px; /* Keeps the buttons pushed neatly to the bottom */
+  margin-bottom:10px;
+
+}
+.profile-summary-btn-container button{
+  height: 50px;
+  
+  font-family: 'Times New Roman', Times, serif;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 26, 26, 0.6); /* Semi-transparent red border */
+  box-shadow: 0 0 15px rgba(255, 26, 26, 0.25), 
+              inset 0 0 10px rgba(255, 26, 26, 0.05);
+  padding:0px;
+  padding-left:5px;
+  padding-right: 5px;
+  font-size:18px;
+  cursor:pointer;
+  background-color: rgba(245, 245, 245, 0.677);
+  white-space: nowrap;
+}
+.view-summary-button{
+  margin-left:auto;
+
+}
+
+
