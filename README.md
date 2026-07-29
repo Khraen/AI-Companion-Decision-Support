@@ -60,7 +60,7 @@
   <li>React.js,CSS for the front end development UI</li>
   <li> Python for backend development</li>
   <li> FASTAPI web framework for building backend API endpts</li>
-  <li> OPENAI ChatGPT-mini model </li>
+  <li> OPENAI API ChatGPT-mini model </li>
   <li> .json files for data storage </li>
   
 </ul>
