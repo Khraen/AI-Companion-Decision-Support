@@ -53,3 +53,41 @@
 
 <h1> Here is a look of what the web application of this project looks like</h1>
 <img width="1436" height="811" alt="Screenshot 2026-07-28 at 3 14 53 PM" src="https://github.com/user-attachments/assets/6a1bfcc3-fe09-497d-88b3-656263d55f26" />
+
+
+<h1> Tech Stack</h1>
+<ul>
+  <li>React.js,CSS for the front end development UI</li>
+  <li> Python for backend development</li>
+  <li> FASTAPI web framework for building backend API endpts</li>
+  <li> OPENAI ChatGPT-mini model </li>
+  <li> .json files for data storage </li>
+  
+</ul>
+
+<h1> About the Project (How it works)</h1>
+<h3>Under the hood</h3>
+<p>
+  The way this project works is by wrapping an OPENAI ai model and manually keeping track of data persistence. The ai has no state management, so the ai's memory and purpose has to be built manually. This is done by prompting and having specific files that are fed into the ai with instructions.  There are 3 primary data collections that I am using to make this application work. The first I will talk about is profile.json. This file keeps the key value pairs of all of the attributes/characteristics of the person. This includes core values, interests, hobbies, etc.. The next file or files is chat_log.txt. These files store conversations of all the sessions. When a conversation balloons the chat_log.txt to a certain size. A new file is created for the next session, leaving the old file to be named archive_log.txt. Lastly, there is summary.json. This is meant to be the long term memory of the model. This file contains the higher level overview of each conversation/session that a user has with the model. This means that it tracks the milestones and import parts of a user's life. It is updated at the end of each session with all logs of the current conversation, so that not all conversations ever recorded have to be fed into the OPENAI api call. With regards to real time conversation, the profile.json is fed into the OPENAI api call so that the query has the instructions on how to reason with the user by using the profile.json as a reference. This file is then updated at the end of the session similarly to summary.json so that it is up to date.
+</p>
+<h3>The applicaton</h3>
+<p> 
+  So for simplicity sake to get a user facing prototype I chose to opt for a web based "deployment".
+  I also went for a web build because I wanted to teach myself React, so I just used this project idea as a way to
+  learn React. The UI is pretty straight forward. The only interactables are the chat bar, the send button, and then the right side panel
+  buttons. The chat bar allows you to chat inside of the chat window of course, and the right viewing panel shows what information
+  the ai has of you stored on the server.
+  
+  Notes: So because I didn't really see this being used by other people I've omitted a couple things I would have otherwise implemented. Right now the profile.json is hard coded template of me with a few base values. If this was a real deployment for a 
+  product I would allow the user to customize the starting template and to reset any data that the ai has on either or all of the 3 file system. This is mainly why I have the settings/profile vertical bar to the left. The idea was for the user to click settings for something like color preference and have the profile icon for customizing app specific stuff.
+</p>
+
+
+<h3>Closing word</h3>
+<p>
+  Well that is all I have to say and I think I have covered everything there is to know from start to finish
+  about this project. If there is anything more that is needed to know please do not hesitate to ask me. I do see this as a completed work, so I will be moving on other projects that I have in mind. I will mostly not be coming back here unless it is to reference something or build ontop of something else. This project idea came from something bigger and better that I wanted to create, but I am not yet at the level or knowledge to do so. I see 
+  this is as a stepping stone in that direction. It's not a perfect system/ai, but I think it speaks to the ongoing process that facilitates self betterment. Self-betterment only ever happens gradually. Einstein didn't become Einstein overnight. Arnold didn't become Arnold after one workout. Self betterment and change in general happens incrementally. I see myself as a reflection of researchers worldwide that are continuously going through iterations of work to achieve the bigger and better breakthroughs. At least, thats what I like to think anyways. whenever I am feeling down about my abilities or whenever I am longing to be better. I know many of you are not going to every read this.  In fact, I am guessing maybe 1 person actually reads any of this, but I very much appreciate all of those that do take the time to do so. 
+  
+Note: Journalng may have recently affected me, so I apologize for the style of this ReadMe.I do not normally write in a blog like fashion this, so maybe I'll delete it later. There is a fine like between being "professional" or "proper" and being me, and sometimes I just like to be me at whatever cost. Also, I think it's just nice to have the ability to speak to both no one and everyone at the same time. Bye all 😊
+</p>
