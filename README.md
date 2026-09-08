@@ -16,7 +16,7 @@
   in the human struggle to
   remain aware, or even knowing, of the moments we are making a mistake. Mistake is probably not the best word, as it is too vague.
   What I mean is the moments in which we are not staying true to the person we are or want to be. There is a quote that has always
-  stuck with me from one of my favorite books of the Licanious Trilogy that has guided by decision making in times of distress 
+  stuck with me from one of my favorite stories(Licanious Trilogy) that has guided me in my decision making in times of distress 
   - "Be the man you aspire to be".
   What would that man do?
 </p>
